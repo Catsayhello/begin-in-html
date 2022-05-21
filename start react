@@ -1,0 +1,146 @@
+Chapter 1 ：react 入门
+https://react.docschina.org/tutorial/tutorial.html#completing-the-game
+
+section 1
+阅读方法： 不需要阅读代码， 阅读中文 ，理解对应含义 
+然后跳到section2 
+
+class ShoppingList extends React.Component {
+  render() {
+    return (
+      <div className="shopping-list">
+        <h1>Shopping List for {this.props.name}</h1>
+        <ul>
+          <li>Instagram</li>
+          <li>WhatsApp</li>
+          <li>Oculus</li>
+        </ul>
+      </div>
+    );
+  }
+}
+
+
+其中，ShoppingList 是一个 React 组件类，或者说是一个 React 组件类型。
+一个组件接收一些参数，我们把这些参数叫做 props（“props” 是 “properties” 简写），然后通过 render 方法返回需要展示在屏幕上的视图的层次结构。
+render 方法的返回值描述了你希望在屏幕上看到的内容。React 根据描述，然后把结果展示出来。
+更具体地来说，render 返回了一个 React 元素，这是一种对渲染内容的轻量级描述。
+大多数的 React 开发者使用了一种名为 “JSX” 的特殊语法，JSX 可以让你更轻松地书写这些结构。语法 <div /> 会被编译成 React.createElement('div')。
+
+
+上述的代码等同于：
+return React.createElement('div', {className: 'shopping-list'},
+  React.createElement('h1', /* ... h1 children ... */),
+  React.createElement('ul', /* ... ul children ... */)
+);
+
+
+前文中的 ShoppingList 组件只会渲染一些内置的 DOM 组件，如<div />、<li />等。
+但是你也可以组合和渲染自定义的 React 组件。例如，你可以通过 <ShoppingList /> 来表示整个购物清单组件。
+每个组件都是封装好的，并且可以单独运行，这样你就可以通过组合简单的组件来构建复杂的 UI 界面。
+
+——————————介绍结束————————————
+section 2
+
+恭喜你！你刚刚成功地把一个 prop 从父组件 Board “传递”给了子组件 Square。在 React 应用中，数据通过 props 的传递，从父组件流向子组件。
+
+在 Board 组件的 renderSquare 方法中，我们将代码改写成下面这样，传递一个名为 value 的 prop 到 Square 当中：
+
+class Board extends React.Component {
+  renderSquare(i) {
+    return <Square value={i} />; //在这里
+  }
+}
+修改 Square 组件中的 render 方法，把 {/* TODO */} 替换为 {this.props.value}，以显示上文中传入的值：
+
+class Square extends React.Component {
+  render() {
+    return (
+      <button className="square">
+        {this.props.value}  //传到了这里
+      </button>
+    );
+  }
+}
+
+总结： 
+1.点击 onclick
+2.记忆 state
+__第一节课结束————
+
+function Square(props){
+  return (
+    <button className = "square" onClick={props.onClick}>
+      {props.value}
+      </button>
+  );
+}                                                 //每一个格子接受board这一中转站信号参数props 从而更改自己value表现的函数
+
+class Board extends React.Component {
+  constructor(props){ 
+    super (props);                                        //props 的目的是为了记录与监控鼠标点击
+    this.state = {
+        squares : Array(9).fill(null), //初始化
+    };
+  }
+  
+    handleClick(i){                                       // 创建square个体的副本，这是一种有用的代码习惯
+      const squares = this.state.squares.slice();
+      squares[i] = 'x';
+      this.setState({squares: squares});                 // 将副版转为正版
+    }
+  
+  renderSquare(i) {
+    return (
+     <Square value={this.state.squares[i]}              //监控与点击
+       onClick={()=>this.handleClick (i)}
+       />
+    );
+  }
+
+  render() {
+    const status = 'Next player: X';
+
+    return (
+      <div>
+        <div className="status">{status}</div>
+        <div className="board-row">
+          {this.renderSquare(0)}
+          {this.renderSquare(1)}
+          {this.renderSquare(2)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(3)}
+          {this.renderSquare(4)}
+          {this.renderSquare(5)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(6)}
+          {this.renderSquare(7)}
+          {this.renderSquare(8)}
+        </div>
+      </div>
+    );
+  }
+}
+
+class Game extends React.Component {
+  render() {
+    return (
+      <div className="game">
+        <div className="game-board">
+          <Board />
+        </div>
+        <div className="game-info">
+          <div>{/* status */}</div>
+          <ol>{/* TODO */}</ol>
+        </div>
+      </div>
+    );
+  }
+}
+
+// ========================================
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Game />);
